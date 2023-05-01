@@ -1,0 +1,44 @@
+N = int(input())
+V = list(map(int, input().split()))
+
+# simulate one lap of the race
+D = [1 if V[i] < V[(i+1)%N] else -1 for i in range(N)]
+P = [V[i] for i in range(N)]
+H = [0 for i in range(N)]
+for t in range(1000):
+    for i in range(N):
+        j = (i+1) % N
+        if D[i] == D[j]: continue
+        if P[j] - P[i] <= 0.2:
+            H[i] += 1
+            H[j] += 1
+            D[i] *= -1
+            D[j] *= -1
+        P[i] += 0.1*D[i]
+        P[j] += 0.1*D[j]
+
+# multiply Hi counts by number of laps
+laps = (10**9 + 6) // 1000
+S = sum(H)*laps
+
+# try all possible initial directions and choose the one that maximizes sum of Hi counts
+for i in range(N):
+    D = [1 if j == i else -1 for j in range(N)]
+    P = [V[j] for j in range(N)]
+    H = [0 for j in range(N)]
+    for t in range(1000):
+        for j in range(N):
+            k = (j+1) % N
+            if D[j] == D[k]: continue
+            if P[k] - P[j] <= 0.2:
+                H[j] += 1
+                H[k] += 1
+                D[j] *= -1
+                D[k] *= -1
+            P[j] += 0.1*D[j]
+            P[k] += 0.1*D[k]
+    T = sum(H)*laps
+    if T > S:
+        S = T
+
+print(S)
